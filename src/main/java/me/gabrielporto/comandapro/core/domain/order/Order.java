@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 import me.gabrielporto.comandapro.core.domain.store.Store;
 
 public class Order {
@@ -89,5 +90,15 @@ public class Order {
         this.updatedAt = OffsetDateTime.now();
     }
 
-    // getters and setters omitted for brevity
+    public UUID getId() {
+        return id;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
 }

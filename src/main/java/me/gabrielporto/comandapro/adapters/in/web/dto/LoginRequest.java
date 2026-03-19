@@ -1,5 +1,14 @@
 package me.gabrielporto.comandapro.adapters.in.web.dto;
 
-public class LoginRequest {
-    // credenciais de login
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record LoginRequest(
+        @NotBlank
+        @Email
+        String email,
+        @NotBlank
+        String password
+        ) {
+
 }

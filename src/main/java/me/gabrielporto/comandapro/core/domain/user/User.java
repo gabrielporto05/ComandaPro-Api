@@ -2,6 +2,7 @@ package me.gabrielporto.comandapro.core.domain.user;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
 /**
  * Domínio puro (sem anotações de infraestrutura).
  */
@@ -29,6 +30,10 @@ public class User {
 
     public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -89,8 +94,16 @@ public class User {
         return createdAt;
     }
 
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
     public OffsetDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(OffsetDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     private void touch() {

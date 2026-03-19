@@ -3,6 +3,7 @@ package me.gabrielporto.comandapro.core.domain.order;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
 import me.gabrielporto.comandapro.core.domain.store.Product;
 
 public class OrderItem {
@@ -16,7 +17,8 @@ public class OrderItem {
     private String observation;
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    public OrderItem() {}
+    public OrderItem() {
+    }
 
     public OrderItem(Order order, Product product, Integer quantity, BigDecimal unitPrice) {
         this.order = order;

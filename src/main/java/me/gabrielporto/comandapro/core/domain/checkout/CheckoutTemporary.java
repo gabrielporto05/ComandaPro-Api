@@ -2,6 +2,7 @@ package me.gabrielporto.comandapro.core.domain.checkout;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
 import me.gabrielporto.comandapro.core.domain.subscription.PlanType;
 
 public class CheckoutTemporary {
@@ -22,7 +23,7 @@ public class CheckoutTemporary {
     }
 
     public CheckoutTemporary(PlanType plan, OffsetDateTime expiresAt, String customerName, String customerEmail,
-                             String customerTel, String customerPasswordHash, String storeName, String storeSlug) {
+            String customerTel, String customerPasswordHash, String storeName, String storeSlug) {
         this.plan = plan;
         this.expiresAt = expiresAt;
         this.customerName = customerName;

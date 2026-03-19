@@ -1,9 +1,17 @@
 package me.gabrielporto.comandapro.adapters.out.persistence.entities;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
 import me.gabrielporto.comandapro.core.domain.subscription.SubscriptionStatus;
 

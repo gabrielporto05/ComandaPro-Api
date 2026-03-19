@@ -1,11 +1,12 @@
 package me.gabrielporto.comandapro.adapters.out.persistence.entities;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
-import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
 
 @Converter
 public class PaymentMethodArrayConverter implements AttributeConverter<PaymentMethod[], String> {

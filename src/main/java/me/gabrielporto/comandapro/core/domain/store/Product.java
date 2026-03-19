@@ -54,6 +54,20 @@ public class Product {
         this.updatedAt = OffsetDateTime.now();
     }
 
-    // getters/setters omitidos
-    public void setStore(Store store) { this.store = store; }
+    // getters/setters essenciais
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+    }
 }

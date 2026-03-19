@@ -1,5 +1,20 @@
 package me.gabrielporto.comandapro.adapters.in.web.dto;
 
-public class RegisterRequest {
-    // dados para cadastro
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record RegisterRequest(
+        @NotBlank
+        String name,
+        @NotBlank
+        @Email
+        String email,
+        @NotBlank
+        String tel,
+        @NotBlank
+        @Size(min = 6)
+        String password
+        ) {
+
 }
