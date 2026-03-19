@@ -1,67 +1,122 @@
 package me.gabrielporto.comandapro.core.domain.store;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-import me.gabrielporto.comandapro.core.domain.order.Order;
-import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
-import me.gabrielporto.comandapro.core.domain.subscription.Subscription;
-import me.gabrielporto.comandapro.core.domain.user.User;
-import lombok.Getter;
-import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-/**
- * Domínio puro da loja, sem dependência de JPA.
- */
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
+import me.gabrielporto.comandapro.core.domain.order.PaymentMethodArrayConverter;
+import me.gabrielporto.comandapro.core.domain.user.User;
+import me.gabrielporto.comandapro.shared.exception.BusinessException;
+
+@Entity
+@Table(name = "stores")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Store {
 
-    private UUID id = UUID.randomUUID();
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID PRIMARY KEY")
+    private UUID id;
+
+    @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
     private String name;
+
+    @Column(name = "slug", nullable = false, unique = true, columnDefinition = "VARCHAR(255) NOT NULL UNIQUE")
     private String slug;
-    private User owner;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "UUID NOT NULL")
+    private User user;
+
+    @Column(name = "email", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
     private String email;
+
+    @Column(name = "tel", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")
     private String tel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(50) NOT NULL")
+    private StoreStatus status;
+
+    @Column(name = "description", length = 500, columnDefinition = "VARCHAR(500)")
     private String description;
+
+    @Column(name = "address", columnDefinition = "VARCHAR(255)")
     private String address;
-    private List<String> photos = new ArrayList<>();
-    private BigDecimal feeDelivery;
-    private List<String> categories = new ArrayList<>();
-    private PaymentMethod[] paymentMethods = new PaymentMethod[0];
-    private StoreStatus status = StoreStatus.ACTIVE;
-    private List<Product> products = new ArrayList<>();
-    private List<StoreHours> hours = new ArrayList<>();
-    private List<Order> orders = new ArrayList<>();
-    private Subscription subscription;
-    private OffsetDateTime createdAt = OffsetDateTime.now();
-    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
-    public Store() {
+    @Column(name = "photos", columnDefinition = "TEXT[]")
+    private List<String> photos;
+
+    @Column(name = "fee_delivery", columnDefinition = "FLOAT")
+    private Double feeDelivery;
+
+    @Column(name = "categories", columnDefinition = "TEXT[]")
+    private List<String> categories;
+
+    @Convert(converter = PaymentMethodArrayConverter.class)
+    @Column(name = "payment_methods", columnDefinition = "TEXT[]")
+    private List<PaymentMethod> paymentMethods;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL")
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<Product> products = new HashSet<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private Set<StoreHours> horarios = new HashSet<>();
+
+    @PrePersist
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = StoreStatus.ACTIVE;
+        }
+        if (this.feeDelivery == null) {
+            this.feeDelivery = 0.0;
+        }
     }
 
-    public Store(String name, String slug, User owner) {
-        this.name = name;
-        this.slug = slug;
-        this.owner = owner;
-    }
-
-    public void activate() {
-        this.status = StoreStatus.ACTIVE;
-        touch();
-    }
-
-    public void suspend() {
-        this.status = StoreStatus.SUSPENDED;
-        touch();
-    }
-
-    public void cancel() {
-        this.status = StoreStatus.CANCELED;
-        touch();
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void addProduct(Product product) {
@@ -69,32 +124,43 @@ public class Store {
         product.setStore(this);
     }
 
-    public void addHour(StoreHours storeHours) {
-        hours.add(storeHours);
-        storeHours.setStore(this);
+    public void removeProduct(Product product) {
+        products.remove(product);
+        product.setStore(null);
     }
 
-    public void setSubscription(Subscription subscription) {
-        this.subscription = subscription;
-        if (subscription != null) {
-            subscription.setStore(this);
+    public void addHorario(StoreHours horario) {
+        horarios.add(horario);
+        horario.setStore(this);
+    }
+
+    public void removeHorario(StoreHours horario) {
+        horarios.remove(horario);
+        horario.setStore(null);
+    }
+
+    public void ativar() {
+        if (this.status == StoreStatus.SUSPENDED) {
+            this.status = StoreStatus.ACTIVE;
+        } else {
+            throw new BusinessException("Apenas lojas suspensas podem ser ativadas");
         }
     }
 
-    private void touch() {
-        this.updatedAt = OffsetDateTime.now();
+    public void suspender() {
+        if (this.status == StoreStatus.ACTIVE) {
+            this.status = StoreStatus.SUSPENDED;
+        } else {
+            throw new BusinessException("Apenas lojas ativas podem ser suspensas");
+        }
     }
 
-    public User getUser() { // alias para compatibilidade
-        return owner;
+    public void cancelar() {
+        if (this.status != StoreStatus.CANCELED) {
+            this.status = StoreStatus.CANCELED;
+        } else {
+            throw new BusinessException("Loja já está cancelada");
+        }
     }
 
-    public List<StoreHours> getHorarios() { // alias
-        return hours;
-    }
-
-    public void setPaymentMethods(List<PaymentMethod> methods) {
-        this.paymentMethods = methods == null ? new PaymentMethod[0] : methods.toArray(new PaymentMethod[0]);
-        touch();
-    }
 }

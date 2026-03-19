@@ -1,64 +1,89 @@
 package me.gabrielporto.comandapro.core.domain.store;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "store_hours")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StoreHours {
 
-    private UUID id = UUID.randomUUID();
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID PRIMARY KEY")
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false, columnDefinition = "UUID NOT NULL")
     private Store store;
+
+    @Column(name = "day_of_week", nullable = false, columnDefinition = "INT NOT NULL")
     private Integer dayOfWeek;
-    private LocalTime openTime;
-    private LocalTime closeTime;
-    private boolean isClosed;
-    private OffsetDateTime createdAt = OffsetDateTime.now();
-    private OffsetDateTime updatedAt = OffsetDateTime.now();
 
-    public StoreHours() {
-    }
+    @Column(name = "open_time", columnDefinition = "VARCHAR(5)")
+    private String openTime;
 
-    public StoreHours(Store store, Integer dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isClosed) {
-        this.store = store;
-        this.dayOfWeek = dayOfWeek;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.isClosed = isClosed;
-    }
+    @Column(name = "close_time", columnDefinition = "VARCHAR(5)")
+    private String closeTime;
 
-    public String getDayName() {
-        if (dayOfWeek == null) {
-            return null;
-        }
-        DayOfWeek dow = DayOfWeek.of(((dayOfWeek % 7) + 7) % 7 + 1);
-        return dow.name();
-    }
+    @Column(name = "is_closed", nullable = false, columnDefinition = "BOOLEAN NOT NULL DEFAULT FALSE")
+    private Boolean isClosed;
 
-    public void setStore(Store store) {
-        this.store = store;
-    }
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL")
+    private LocalDateTime createdAt;
 
-    public void setOpenTime(String time) {
-        this.openTime = time != null ? LocalTime.parse(time) : null;
-    }
-
-    public void setCloseTime(String time) {
-        this.closeTime = time != null ? LocalTime.parse(time) : null;
-    }
+    @UpdateTimestamp
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedAt;
 
     public String getFormattedTime() {
-        if (Boolean.TRUE.equals(isClosed)) {
+        if (isClosed) {
             return "Fechado";
         }
-        if (openTime == null || closeTime == null) {
-            return null;
-        }
         return openTime + " - " + closeTime;
+    }
+
+    public static String getDayName(int dayOfWeek) {
+        return switch (dayOfWeek) {
+            case 0 ->
+                "Domingo";
+            case 1 ->
+                "Segunda";
+            case 2 ->
+                "Terça";
+            case 3 ->
+                "Quarta";
+            case 4 ->
+                "Quinta";
+            case 5 ->
+                "Sexta";
+            case 6 ->
+                "Sábado";
+            default ->
+                "Inválido";
+        };
     }
 }

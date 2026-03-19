@@ -1,40 +1,92 @@
 package me.gabrielporto.comandapro.core.domain.checkout;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-import me.gabrielporto.comandapro.core.domain.subscription.PlanType;
+import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "checkout_temporary")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class CheckoutTemporary {
 
-    private UUID id = UUID.randomUUID();
-    private PlanType plan;
-    private OffsetDateTime expiresAt;
-    private String customerName;
-    private String customerEmail;
-    private String customerTel;
-    private String customerPasswordHash;
-    private String storeName;
-    private String storeSlug;
-    private boolean processed = false;
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(columnDefinition = "UUID PRIMARY KEY")
+    private UUID id;
 
-    public CheckoutTemporary() {
+    @Column(name = "plan", nullable = false, columnDefinition = "VARCHAR(50) NOT NULL")
+    private String plan;
+
+    @Column(name = "expires_at", nullable = false, columnDefinition = "TIMESTAMP NOT NULL")
+    private LocalDateTime expiresAt;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "name", column = @Column(name = "client_name", columnDefinition = "VARCHAR(255) NOT NULL")),
+        @AttributeOverride(name = "email", column = @Column(name = "client_email", columnDefinition = "VARCHAR(255) NOT NULL")),
+        @AttributeOverride(name = "tel", column = @Column(name = "client_tel", columnDefinition = "VARCHAR(20) NOT NULL")),
+        @AttributeOverride(name = "passwordHash", column = @Column(name = "client_password_hash", columnDefinition = "VARCHAR(255) NOT NULL"))
+    })
+    private ClientData client;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "name", column = @Column(name = "store_name", columnDefinition = "VARCHAR(255) NOT NULL")),
+        @AttributeOverride(name = "slug", column = @Column(name = "store_slug", columnDefinition = "VARCHAR(255) NOT NULL"))
+    })
+    private StoreData store;
+
+    @Column(name = "processed", nullable = false, columnDefinition = "BOOLEAN NOT NULL DEFAULT FALSE")
+    private boolean processed;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "TIMESTAMP NOT NULL")
+    private LocalDateTime createdAt;
+
+    @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ClientData {
+
+        private String name;
+        private String email;
+        private String tel;
+        private String passwordHash;
     }
 
-    public CheckoutTemporary(PlanType plan, OffsetDateTime expiresAt, String customerName, String customerEmail,
-            String customerTel, String customerPasswordHash, String storeName, String storeSlug) {
-        this.plan = plan;
-        this.expiresAt = expiresAt;
-        this.customerName = customerName;
-        this.customerEmail = customerEmail;
-        this.customerTel = customerTel;
-        this.customerPasswordHash = customerPasswordHash;
-        this.storeName = storeName;
-        this.storeSlug = storeSlug;
-    }
+    @Embeddable
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class StoreData {
 
-    public void markProcessed() {
-        this.processed = true;
+        private String name;
+        private String slug;
     }
 }
