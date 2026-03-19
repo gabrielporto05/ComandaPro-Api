@@ -4,9 +4,14 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Produto no domínio (sem anotações JPA).
  */
+@Getter
+@Setter
 public class Product {
 
     private UUID id = UUID.randomUUID();
@@ -52,22 +57,5 @@ public class Product {
 
     private void touch() {
         this.updatedAt = OffsetDateTime.now();
-    }
-
-    // getters/setters essenciais
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
     }
 }

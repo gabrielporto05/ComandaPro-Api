@@ -21,7 +21,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
 import me.gabrielporto.comandapro.core.domain.store.StoreStatus;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "stores")
 public class StoreEntity {

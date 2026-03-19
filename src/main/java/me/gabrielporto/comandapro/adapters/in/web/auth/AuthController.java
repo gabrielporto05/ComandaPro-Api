@@ -10,11 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.validation.Valid;
-import me.gabrielporto.comandapro.adapters.in.web.dto.ApiResponse;
-import me.gabrielporto.comandapro.adapters.in.web.dto.AuthResponse;
-import me.gabrielporto.comandapro.adapters.in.web.dto.LoginRequest;
-import me.gabrielporto.comandapro.adapters.in.web.dto.RegisterRequest;
+import me.gabrielporto.comandapro.adapters.in.web.dto.response.ApiResponse;
+import me.gabrielporto.comandapro.adapters.in.web.dto.response.AuthResponse;
+import me.gabrielporto.comandapro.adapters.in.web.dto.request.LoginRequest;
+import me.gabrielporto.comandapro.adapters.in.web.dto.request.RegisterRequest;
 import me.gabrielporto.comandapro.config.TokenService;
 import me.gabrielporto.comandapro.core.domain.user.Role;
 import me.gabrielporto.comandapro.core.domain.user.User;
@@ -41,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
@@ -52,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<AuthResponse>> register(@RequestBody RegisterRequest request) {
         User user = new User(request.name(), request.email(), request.tel(), passwordEncoder.encode(request.password()));
         user.setRole(Role.OWNER);
         user.setStatus(UserStatus.ACTIVE);

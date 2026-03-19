@@ -36,4 +36,19 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     public Optional<User> findById(UUID id) {
         return repository.findById(id).map(UserPersistenceMapper::toDomain);
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return repository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByEmailAndIdNot(String email, UUID id) {
+        return repository.existsByEmailAndIdNot(email, id);
+    }
+
+    @Override
+    public java.util.List<User> findAllUsers() {
+        return repository.findAll().stream().map(UserPersistenceMapper::toDomain).toList();
+    }
 }

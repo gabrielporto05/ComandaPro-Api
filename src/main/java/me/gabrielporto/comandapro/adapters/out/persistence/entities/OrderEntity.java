@@ -18,7 +18,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import me.gabrielporto.comandapro.core.domain.order.OrderStatus;
 import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "orders")
 public class OrderEntity {

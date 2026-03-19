@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.gabrielporto.comandapro.core.domain.store.Store;
 
+@Getter
+@Setter
 public class Order {
 
     private UUID id = UUID.randomUUID();
@@ -88,17 +92,5 @@ public class Order {
 
     private void touch() {
         this.updatedAt = OffsetDateTime.now();
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getOrderCode() {
-        return orderCode;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
     }
 }

@@ -1,4 +1,4 @@
-package me.gabrielporto.comandapro.adapters.in.web.dto;
+package me.gabrielporto.comandapro.adapters.in.web.dto.response;
 
 public class ApiResponse<T> {
 

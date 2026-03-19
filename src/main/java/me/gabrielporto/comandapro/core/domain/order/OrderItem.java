@@ -4,8 +4,12 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import lombok.Getter;
+import lombok.Setter;
 import me.gabrielporto.comandapro.core.domain.store.Product;
 
+@Getter
+@Setter
 public class OrderItem {
 
     private UUID id = UUID.randomUUID();

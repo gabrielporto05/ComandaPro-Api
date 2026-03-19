@@ -1,4 +1,4 @@
-package me.gabrielporto.comandapro.adapters.in.web.dto;
+package me.gabrielporto.comandapro.adapters.in.web.dto.response;
 
 import me.gabrielporto.comandapro.core.domain.user.User;
 

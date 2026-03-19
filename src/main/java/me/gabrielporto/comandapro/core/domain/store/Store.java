@@ -10,10 +10,14 @@ import me.gabrielporto.comandapro.core.domain.order.Order;
 import me.gabrielporto.comandapro.core.domain.order.PaymentMethod;
 import me.gabrielporto.comandapro.core.domain.subscription.Subscription;
 import me.gabrielporto.comandapro.core.domain.user.User;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Domínio puro da loja, sem dependência de JPA.
  */
+@Getter
+@Setter
 public class Store {
 
     private UUID id = UUID.randomUUID();
@@ -81,5 +85,16 @@ public class Store {
         this.updatedAt = OffsetDateTime.now();
     }
 
-    // getters and setters omitidos para brevidade
+    public User getUser() { // alias para compatibilidade
+        return owner;
+    }
+
+    public List<StoreHours> getHorarios() { // alias
+        return hours;
+    }
+
+    public void setPaymentMethods(List<PaymentMethod> methods) {
+        this.paymentMethods = methods == null ? new PaymentMethod[0] : methods.toArray(new PaymentMethod[0]);
+        touch();
+    }
 }

@@ -12,4 +12,10 @@ public interface UserRepositoryPort {
     Optional<User> findByEmail(String email);
 
     Optional<User> findById(UUID id);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, UUID id);
+
+    java.util.List<User> findAllUsers();
 }

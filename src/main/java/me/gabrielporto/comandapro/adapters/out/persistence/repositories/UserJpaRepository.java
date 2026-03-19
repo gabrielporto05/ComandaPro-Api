@@ -10,4 +10,8 @@ import me.gabrielporto.comandapro.adapters.out.persistence.entities.UserEntity;
 public interface UserJpaRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByEmail(String email);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndIdNot(String email, UUID id);
 }
