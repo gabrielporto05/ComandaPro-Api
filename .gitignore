@@ -33,7 +33,7 @@ build/
 .vscode/
 
 # App config / resources
-src/main/resources/
+src/main/resources/application.properties
 
 # App uploads
 uploads/**
