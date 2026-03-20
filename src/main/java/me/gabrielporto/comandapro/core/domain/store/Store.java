@@ -46,7 +46,7 @@ public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "UUID PRIMARY KEY")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(255) NOT NULL")

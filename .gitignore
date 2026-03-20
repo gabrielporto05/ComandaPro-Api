@@ -34,3 +34,6 @@ build/
 
 # App config / resources
 src/main/resources/
+
+# App uploads
+uploads/**

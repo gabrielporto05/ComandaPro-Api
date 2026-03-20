@@ -32,7 +32,7 @@ public class CheckoutTemporary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "UUID PRIMARY KEY")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @Column(name = "plan", nullable = false, columnDefinition = "VARCHAR(50) NOT NULL")

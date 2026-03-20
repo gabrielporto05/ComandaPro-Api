@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import me.gabrielporto.comandapro.application.store.ManageProductsUseCase;
-import me.gabrielporto.comandapro.core.domain.store.Product;
 import me.gabrielporto.comandapro.core.domain.user.User;
 import me.gabrielporto.comandapro.infrastructure.web.dto.response.ApiResponse;
 import me.gabrielporto.comandapro.shared.exception.BusinessException;
@@ -63,7 +62,7 @@ public class ProductPhotoController {
 
             String photoUrl = String.format("%s/uploads/%s/products/%s", baseUrl, storeId, fileName);
 
-            Product product = manageProductsUseCase.updatePhotoUrl(productId, user.getId(), photoUrl);
+            manageProductsUseCase.updatePhotoUrl(productId, user.getId(), photoUrl);
 
             return ResponseEntity.ok(new ApiResponse(
                     "Foto do produto enviada com sucesso",

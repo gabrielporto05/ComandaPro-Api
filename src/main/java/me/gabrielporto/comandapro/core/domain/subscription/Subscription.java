@@ -37,7 +37,7 @@ public class Subscription {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "UUID PRIMARY KEY")
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
