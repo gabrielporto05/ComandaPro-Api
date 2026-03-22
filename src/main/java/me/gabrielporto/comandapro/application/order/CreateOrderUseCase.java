@@ -59,8 +59,6 @@ public class CreateOrderUseCase {
                 .customerAddressNumber(request.customerAddressNumber())
                 .customerAddressComplement(request.customerAddressComplement())
                 .customerAddressNeighborhood(request.customerAddressNeighborhood())
-                .customerAddressCity(request.customerAddressCity())
-                .customerAddressZipcode(request.customerAddressZipcode())
                 .paymentMethod(request.paymentMethod())
                 .changeFor(request.changeFor())
                 .deliveryFee(deliveryFee)

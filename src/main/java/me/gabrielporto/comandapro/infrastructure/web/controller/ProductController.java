@@ -49,6 +49,25 @@ public class ProductController {
         ));
     }
 
+    @GetMapping("/stores/{storeSlug}/all-products")
+    public ResponseEntity<ApiResponse> listAllProductsForOwner(
+            @PathVariable String storeSlug,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+
+        List<Product> products = manageProductsUseCase.listAllProductsByStoreSlug(storeSlug, user.getId());
+
+        List<ProductResponse> response = products.stream()
+                .map(this::toResponse)
+                .toList();
+
+        return ResponseEntity.ok(new ApiResponse(
+                "Todos os produtos listados com sucesso",
+                response
+        ));
+    }
+
     @GetMapping("/public/products/{productId}")
     public ResponseEntity<ApiResponse> getPublicProduct(@PathVariable UUID productId) {
         Product product = manageProductsUseCase.getProduct(productId);

@@ -14,8 +14,6 @@ public record OrderResponse(
         String customerAddressNumber,
         String customerAddressComplement,
         String customerAddressNeighborhood,
-        String customerAddressCity,
-        String customerAddressZipcode,
         String paymentMethod,
         Double changeFor,
         Double totalAmount,

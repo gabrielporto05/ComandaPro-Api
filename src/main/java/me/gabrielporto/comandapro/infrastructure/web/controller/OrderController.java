@@ -218,8 +218,6 @@ public class OrderController {
                 order.getCustomerAddressNumber(),
                 order.getCustomerAddressComplement(),
                 order.getCustomerAddressNeighborhood(),
-                order.getCustomerAddressCity(),
-                order.getCustomerAddressZipcode(),
                 order.getPaymentMethod().name(),
                 order.getChangeFor(),
                 order.getTotalAmount(),

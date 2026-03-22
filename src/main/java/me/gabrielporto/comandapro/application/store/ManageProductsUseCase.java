@@ -35,6 +35,18 @@ public class ManageProductsUseCase {
     }
 
     @Transactional(readOnly = true)
+    public List<Product> listAllProductsByStoreSlug(String storeSlug, UUID userId) {
+        Store store = storeRepository.findBySlug(storeSlug)
+                .orElseThrow(() -> new BusinessException("Loja não encontrada"));
+
+        if (!store.getUser().getId().equals(userId)) {
+            throw new BusinessException("Você não tem permissão para ver todos os produtos desta loja");
+        }
+
+        return productRepository.findByStoreId(store.getId());
+    }
+
+    @Transactional(readOnly = true)
     public Product getProduct(UUID productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException("Produto não encontrado"));

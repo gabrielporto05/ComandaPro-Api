@@ -66,12 +66,6 @@ public class Order {
     @Column(name = "customer_address_neighborhood")
     private String customerAddressNeighborhood;
 
-    @Column(name = "customer_address_city")
-    private String customerAddressCity;
-
-    @Column(name = "customer_address_zipcode")
-    private String customerAddressZipcode;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
@@ -254,22 +248,6 @@ public class Order {
 
     public void setCustomerAddressNeighborhood(String customerAddressNeighborhood) {
         this.customerAddressNeighborhood = customerAddressNeighborhood;
-    }
-
-    public String getCustomerAddressCity() {
-        return customerAddressCity;
-    }
-
-    public void setCustomerAddressCity(String customerAddressCity) {
-        this.customerAddressCity = customerAddressCity;
-    }
-
-    public String getCustomerAddressZipcode() {
-        return customerAddressZipcode;
-    }
-
-    public void setCustomerAddressZipcode(String customerAddressZipcode) {
-        this.customerAddressZipcode = customerAddressZipcode;
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -569,8 +547,6 @@ public class Order {
             order.setCustomerAddressNumber(customerAddressNumber);
             order.setCustomerAddressComplement(customerAddressComplement);
             order.setCustomerAddressNeighborhood(customerAddressNeighborhood);
-            order.setCustomerAddressCity(customerAddressCity);
-            order.setCustomerAddressZipcode(customerAddressZipcode);
             order.setPaymentMethod(paymentMethod);
             order.setChangeFor(changeFor);
             order.setTotalAmount(totalAmount);
