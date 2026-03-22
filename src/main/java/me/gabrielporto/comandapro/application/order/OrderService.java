@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,8 @@ import me.gabrielporto.comandapro.core.domain.order.Order;
 import me.gabrielporto.comandapro.core.domain.order.OrderStatus;
 import me.gabrielporto.comandapro.infrastructure.persistence.repository.OrderJpaRepository;
 import me.gabrielporto.comandapro.infrastructure.persistence.repository.StoreJpaRepository;
+import me.gabrielporto.comandapro.infrastructure.web.websocket.dto.OrderStatusNotification;
+import me.gabrielporto.comandapro.infrastructure.web.websocket.dto.StoreOrderNotification;
 import me.gabrielporto.comandapro.shared.exception.BusinessException;
 
 @Service
@@ -22,10 +25,16 @@ public class OrderService {
 
     private final OrderJpaRepository orderRepository;
     private final StoreJpaRepository storeRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public OrderService(OrderJpaRepository orderRepository, StoreJpaRepository storeRepository) {
+    public OrderService(
+            OrderJpaRepository orderRepository,
+            StoreJpaRepository storeRepository,
+            SimpMessagingTemplate messagingTemplate
+    ) {
         this.orderRepository = orderRepository;
         this.storeRepository = storeRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional(readOnly = true)
@@ -95,8 +104,6 @@ public class OrderService {
         Order order = getOrder(orderId, userId);
 
         switch (newStatus) {
-            case PENDING ->
-                throw new BusinessException("Não é possível voltar status para pendente");
             case PREPARING ->
                 order.accept();
             case READY ->
@@ -105,9 +112,25 @@ public class OrderService {
                 order.markAsDelivered();
             case CANCELLED ->
                 order.cancel(cancellationReason != null ? cancellationReason : "Cancelado pela loja");
+            default ->
+                throw new BusinessException("Status inválido ou não permitido");
         }
 
-        return orderRepository.save(order);
+        Order updatedOrder = orderRepository.save(order);
+
+        notifyStatusUpdate(updatedOrder);
+
+        return updatedOrder;
+    }
+
+    private void notifyStatusUpdate(Order order) {
+        messagingTemplate.convertAndSend("/topic/order/" + order.getOrderCode(),
+                new OrderStatusNotification(order.getId(), order.getStatus(), order.getOrderCode())
+        );
+
+        messagingTemplate.convertAndSend("/topic/store/" + order.getStore().getId(),
+                new StoreOrderNotification("STATUS_UPDATE", order.getId(), order.getStatus())
+        );
     }
 
     @Transactional(readOnly = true)

@@ -33,6 +33,9 @@ public class SecurityConfig {
                 .sessionManagement(session
                         -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
+                // Rota de web socket
+                .requestMatchers("/ws-comandapro/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Rotas públicas
                 .requestMatchers(HttpMethod.OPTIONS, "/api/v1/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()

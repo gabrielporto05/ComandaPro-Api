@@ -16,11 +16,12 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOriginPatterns(List.of(
+                "https://comandapro.gabrielporto.me",
+                "https://comandapro.app",
                 "http://localhost:3000",
                 "http://192.168.15.9:3000",
                 "http://192.168.13.206:3000",
-                "http://192.168.13.30:3000",
-                "https://comandapro.app"
+                "http://192.168.13.30:3000"
         ));
 
         config.setAllowedMethods(List.of(

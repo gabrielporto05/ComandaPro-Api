@@ -3,6 +3,7 @@ package me.gabrielporto.comandapro.application.order;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import me.gabrielporto.comandapro.infrastructure.persistence.repository.ProductJ
 import me.gabrielporto.comandapro.infrastructure.persistence.repository.StoreJpaRepository;
 import me.gabrielporto.comandapro.infrastructure.web.dto.request.CreateOrderItemRequest;
 import me.gabrielporto.comandapro.infrastructure.web.dto.request.CreateOrderRequest;
+import me.gabrielporto.comandapro.infrastructure.web.websocket.dto.StoreOrderNotification;
 import me.gabrielporto.comandapro.shared.exception.BusinessException;
 
 @Service
@@ -26,16 +28,19 @@ public class CreateOrderUseCase {
     private final StoreJpaRepository storeRepository;
     private final ProductJpaRepository productRepository;
     private final OrderCodeGenerator orderCodeGenerator;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public CreateOrderUseCase(
             OrderJpaRepository orderRepository,
             StoreJpaRepository storeRepository,
             ProductJpaRepository productRepository,
-            OrderCodeGenerator orderCodeGenerator) {
+            OrderCodeGenerator orderCodeGenerator,
+            SimpMessagingTemplate messagingTemplate) {
         this.orderRepository = orderRepository;
         this.storeRepository = storeRepository;
         this.productRepository = productRepository;
         this.orderCodeGenerator = orderCodeGenerator;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -90,6 +95,12 @@ public class CreateOrderUseCase {
             order.addItem(item);
         }
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        messagingTemplate.convertAndSend("/topic/store/" + storeId,
+                new StoreOrderNotification("NEW_ORDER", savedOrder.getId(), savedOrder.getStatus())
+        );
+
+        return savedOrder;
     }
 }
